@@ -29,3 +29,11 @@ Streamlit UI for easy user interaction.
    ```bash
    streamlit run app_main.py
 
+```
+code-plagiarism-app/
+│── app_main.py       # Streamlit UI for plagiarism detection
+│── app_store.py      # Clones repositories, extracts code, generates embeddings
+│── requirements.txt  # Dependencies
+│── Dockerfile        # Docker configuration
+│── README.md         # Documentation
+```
