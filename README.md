@@ -6,8 +6,13 @@ This project is a Code Plagiarism Detection System built using Streamlit, FAISS,
 
 Features:
 Clone multiple Git repositories and extract code files.
+
 Generate vector embeddings for code files using microsoft/codebert-base.
+
 Store embeddings in FAISS for efficient similarity search.
+
 Compare new code snippets against stored embeddings.
+
 Use GPT-based analysis to determine plagiarism.
+
 Streamlit UI for easy user interaction.
