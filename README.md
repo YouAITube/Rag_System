@@ -18,3 +18,14 @@ Use GPT-based analysis to determine plagiarism.
 
 Streamlit UI for easy user interaction.
 
+
+### How to Use  
+
+1. Clone this repository.  
+2. Install dependencies from `requirements.txt`.  
+3. Run `app_store.py` to process repositories.  
+4. Start the Streamlit UI with:  
+
+   ```bash
+   streamlit run app_main.py
+
