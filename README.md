@@ -17,27 +17,3 @@ Use GPT-based analysis to determine plagiarism.
 
 Streamlit UI for easy user interaction.
 
-\documentclass{article}
-\usepackage{xcolor}
-\usepackage{listings}
-
-\begin{document}
-
-\section*{\textbf{Running the Application}}
-
-\subsection*{\textbf{Run with Python}}
-
-\subsubsection*{\textbf{Step 1: Process Repositories}}
-\noindent
-\begin{lstlisting}[language=bash, backgroundcolor=\color{black}, basicstyle=\ttfamily\color{white}]
-python app_store.py
-\end{lstlisting}
-
-\subsubsection*{\textbf{Step 2: Start the Streamlit App}}
-\noindent
-\begin{lstlisting}[language=bash, backgroundcolor=\color{black}, basicstyle=\ttfamily\color{white}]
-streamlit run app_main.py
-\end{lstlisting}
-
-\end{document}
-
