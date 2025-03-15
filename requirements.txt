@@ -1,0 +1,9 @@
+numpy
+faiss-cpu
+torch
+transformers
+sentence-transformers
+streamlit
+openai
+gitpython
+
