@@ -11,12 +11,9 @@ import streamlit as st
 from sentence_transformers import SentenceTransformer
 import openai
 
-def get_code_embedding(file_path, model_name="microsoft/codebert-base"):
+def get_code_embedding(code, model_name="microsoft/codebert-base"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModel.from_pretrained(model_name)
-
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-        code = f.read()
 
     inputs = tokenizer(code, return_tensors="pt", truncation=True, padding=True, max_length=512)
     with torch.no_grad():
@@ -24,6 +21,7 @@ def get_code_embedding(file_path, model_name="microsoft/codebert-base"):
 
     embedding = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
     return embedding
+
 
 def search_similar_code(query_embedding, top_k=5):
     index = faiss.read_index("code_embeddings.index")
