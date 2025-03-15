@@ -11,7 +11,7 @@ import streamlit as st
 from sentence_transformers import SentenceTransformer
 import openai
 
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_code_embedding(code, model_name="microsoft/codebert-base"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
