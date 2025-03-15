@@ -43,15 +43,15 @@ def get_plagiarism_response(user_code, similar_code_files):
     Based on the above, is the user's code plagiarized? Respond with only "Yes" or "No". If "Yes", include the references to the code files from the database as context.
     """
 
-    # Query the LLM (OpenAI GPT-3 or GPT-4)
-    response = openai.Completion.create(
-        model="text-davinci-003",  # Use the appropriate model
-        prompt=prompt,
-        max_tokens=50,
-        n=1,
-        stop=None,
-        temperature=0
-    )
+    client = openai.OpenAI()
+
+    response = client.completions.create(
+    model="gpt-4",  # Use "gpt-4" or another available model
+    messages=[{"role": "system", "content": "You are a plagiarism detection assistant."},
+              {"role": "user", "content": prompt}],
+    max_tokens=50,
+    temperature=0
+)
     return response.choices[0].text.strip()
 
 # Streamlit UI
