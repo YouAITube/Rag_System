@@ -27,11 +27,11 @@ Streamlit UI for easy user interaction.
 4. Start the Streamlit UI with:  
 
    ```bash
-   streamlit run app_main.py
+   streamlit run app.py
 
 ```
 code-plagiarism-app/
-│── app_main.py       # Streamlit UI for plagiarism detection
+│── app.py       # Streamlit UI for plagiarism detection
 │── app_store.py      # Clones repositories, extracts code, generates embeddings
 │── requirements.txt  # Dependencies
 │── Dockerfile        # Docker configuration
