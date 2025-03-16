@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/1b34f927-f359-4ec3-b6b9-ce2736e1866e)
+
 
 
 Code Plagiarism Detection App
@@ -40,3 +40,6 @@ code-plagiarism-app/
 │── Dockerfile        # Docker configuration
 │── README.md         # Documentation
 ```
+
+![image](https://github.com/user-attachments/assets/1b34f927-f359-4ec3-b6b9-ce2736e1866e)
+
