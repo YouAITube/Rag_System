@@ -1,10 +1,18 @@
-import torch
+
+
+import os
+import subprocess
+from pathlib import Path
 import numpy as np
 import faiss
+import torch
+from transformers import AutoTokenizer, AutoModel
 import streamlit as st
-from transformers import AutoTokenizer, AutoModel, pipeline
+from sentence_transformers import SentenceTransformer
+import openai
 
-# Function to get code embedding (DO NOT CHANGE)
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 def get_code_embedding(code, model_name="microsoft/codebert-base"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModel.from_pretrained(model_name)
@@ -16,16 +24,15 @@ def get_code_embedding(code, model_name="microsoft/codebert-base"):
     embedding = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
     return embedding
 
-# Function to search similar code in FAISS index (FIXED)
+
 def search_similar_code(query_embedding, top_k=5):
     index = faiss.read_index("code_embeddings.index")
     query_embedding = np.array([query_embedding], dtype=np.float32)
     distances, indices = index.search(query_embedding, top_k)
-    
-    return indices[0] if indices.any() else []
+    return indices[0]
 
-# Function to get plagiarism response from a language model
-def get_plagiarism_response(user_code, similar_code_files, model_name="mistralai/Mistral-7B-Instruct-v0.2"):
+def get_plagiarism_response(user_code, similar_code_files):
+    # Construct a prompt for the LLM
     prompt = f"""
     You are a plagiarism detection assistant. Your task is to determine whether the given code is plagiarized.
 
@@ -35,62 +42,52 @@ def get_plagiarism_response(user_code, similar_code_files, model_name="mistralai
     Below are similar code files found in the database:
     {similar_code_files}
 
-    Based on the above, is the user's code plagiarized? Respond with only "Yes" or "No".
-    If "Yes", include the references to the code files from the database as context.
+    Based on the above, is the user's code plagiarized? Respond with only "Yes" or "No". If "Yes", include the references to the code files from the database as context.
     """
 
-    pipe = pipeline("text-generation", model=model_name, device=0 if torch.cuda.is_available() else -1)
+    client = openai.OpenAI()
 
-    response = pipe(
-        prompt,
-        max_length=100,
-        num_return_sequences=1,
-        temperature=0.1,
-        eos_token_id=pipe.tokenizer.eos_token_id,
-    )[0]['generated_text']
-
-    if "Yes" in response:
-        return "Yes" + response.split("Yes", 1)[1].strip()
-    elif "No" in response:
-        return "No"
-    else:
-        return "Could not determine plagiarism."
+    response = client.completions.create(
+    model="gpt-4",  # Use "gpt-4" or another available model
+    messages=[{"role": "system", "content": "You are a plagiarism detection assistant."},
+              {"role": "user", "content": prompt}],
+    max_tokens=50,
+    temperature=0
+)
+    return response.choices[0].text.strip()
 
 # Streamlit UI
 def streamlit_ui():
-    st.title("🚀 Code Plagiarism Detection")
+    st.title("Code Plagiarism Detection")
 
     code_input = st.text_area("Enter your code snippet:")
 
-    if st.button("🔍 Check for Plagiarism"):
-        if code_input.strip():
-            with st.spinner("Processing..."):
-                try:
-                    query_embedding = get_code_embedding(code_input)
-                    similar_indices = search_similar_code(query_embedding)
+    if st.button("Check for Plagiarism"):
+        if code_input:
+            # Get the embedding for the user's code snippet
+            query_embedding = get_code_embedding(code_input)
 
-                    if similar_indices.any():  # 🔥 Fixed the check
-                        similar_code_files = [f"Code File {idx}" for idx in similar_indices]
-                        response = get_plagiarism_response(code_input, "\n".join(similar_code_files))
+            # Search for similar code in the FAISS index
+            similar_indices = search_similar_code(query_embedding)
 
-                        if response.lower().startswith("yes"):
-                            st.error("🚨 Plagiarism Detected! References:")
-                            st.write(response.split("Yes", 1)[1].strip())
-                        elif response.lower() == "no":
-                            st.success("✅ No plagiarism detected.")
-                        else:
-                            st.warning(response)
-                    else:
-                        st.warning("⚠️ No similar code found in the database.")
+            # Retrieve the paths of the similar code files
+            similar_code_files = [f"Code File: {code_file}" for code_file in similar_indices]
 
-                except Exception as e:
-                    st.error(f"❌ Error: {e}")
+            # Get LLM's response on plagiarism
+            response = get_plagiarism_response(code_input, "\n".join(similar_code_files))
+
+            # Display the response (whether the code is plagiarized or not)
+            if response.lower() == "yes":
+                st.write("The code appears to be plagiarized. Here are the references:")
+                st.write("\n".join(similar_code_files))
+            else:
+                st.write("The code does not appear to be plagiarized.")
         else:
-            st.error("⚠️ Please enter a code snippet.")
+            st.error("Please enter a code snippet.")
 
-# Main function
 def main():
+    # Streamlit UI
     streamlit_ui()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
