@@ -6,7 +6,7 @@ Code Plagiarism Detection App
 
 # Overview
 
-This project is a Code Plagiarism Detection System built using Streamlit, FAISS, and Hugging Face Transformers. The system allows users to input a code snippet and checks for similar code files stored in a vector database using FAISS. It then queries an LLM (GPT-4) to determine if the submitted code is plagiarized.
+This project is a Code Plagiarism Detection System built using Streamlit, FAISS, and Hugging Face Transformers. The system allows users to input a code snippet and checks for similar code files stored in a vector database using FAISS. It then queries an LLM  to determine if the submitted code is plagiarized.
 
 # Features:
 
